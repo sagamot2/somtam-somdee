@@ -234,6 +234,7 @@ async function sendOrder() {
             paymentMethod: paymentMethod,
             slipImage: slipBase64 || "",
             note: orderNote,
+            status: "รอทำ", 
             timestamp: new Date().toISOString()
         };
 
@@ -249,12 +250,29 @@ async function sendOrder() {
         playOrderSound();
 
         document.getElementById('orderIdDisplay').textContent = `หมายเลขคิวของคุณคือ: ${newOrderNumber}`;
+        
+        listenForOrderStatus(latestOrderKey, newOrderNumber);
+
         resetCart();
 
     } catch (err) {
         console.error("ส่งคำสั่งซื้อผิดพลาด:", err);
         alert("เกิดข้อผิดพลาดในการส่งคำสั่งซื้อ");
     }
+}
+function listenForOrderStatus(orderKey, queueNumber) {
+    const db = firebase.database();
+    const statusRef = db.ref("orders/" + orderKey + "/status");
+
+    statusRef.on("value", (snapshot) => {
+        const currentStatus = snapshot.val();
+        
+        if (currentStatus === "ทำเสร็จแล้ว") {
+            alert(`🎉 อาหารคิวที่ ${queueNumber} ของคุณทำเสร็จเรียบร้อยแล้ว มารับได้เลยครับ!`);
+            
+            statusRef.off();
+        }
+    });
 }
 
 function resetCart() {
