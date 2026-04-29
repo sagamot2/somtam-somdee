@@ -64,13 +64,19 @@ const menu = {
 };
 
 function showTab(tabId, event) {
+    // ซ่อนหมวดหมู่อาหารทั้งหมด
     document.querySelectorAll('.menu-section').forEach(section => {
         section.classList.remove('active');
     });
-    document.querySelectorAll('.tab-btn').forEach(btn => {
+    // ลบสถานะ Active ของปุ่มในเมนูด้านข้าง
+    document.querySelectorAll('.menu-link').forEach(btn => {
         btn.classList.remove('active');
     });
+    
+    // แสดงหมวดหมู่ที่เลือก
     document.getElementById(tabId).classList.add('active');
+    
+    // เปลี่ยนสีปุ่มที่กดให้เป็น Active
     if (event && event.target) {
         event.target.classList.add('active');
     }
@@ -260,6 +266,7 @@ async function sendOrder() {
         alert("เกิดข้อผิดพลาดในการส่งคำสั่งซื้อ");
     }
 }
+
 function listenForOrderStatus(orderKey, queueNumber) {
     const db = firebase.database();
     const statusRef = db.ref("orders/" + orderKey + "/status");
@@ -269,7 +276,6 @@ function listenForOrderStatus(orderKey, queueNumber) {
         
         if (currentStatus === "ทำเสร็จแล้ว") {
             alert(`🎉 อาหารคิวที่ ${queueNumber} ของคุณทำเสร็จเรียบร้อยแล้ว มารับได้เลยครับ!`);
-            
             statusRef.off();
         }
     });
@@ -299,6 +305,21 @@ function showQueuePopup(number) {
 
 function closeQueuePopup() {
     document.getElementById("queuePopup").style.display = "none";
+}
+
+function toggleMenu() {
+    const menu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('sideMenuOverlay');
+    
+    menu.classList.toggle('open');
+    
+    if (menu.classList.contains('open')) {
+        overlay.style.display = 'block';
+        setTimeout(() => overlay.classList.add('open'), 10);
+    } else {
+        overlay.classList.remove('open');
+        setTimeout(() => overlay.style.display = 'none', 300);
+    }
 }
 
 renderMenus();
