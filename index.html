@@ -11,18 +11,30 @@
 </head>
 <body>
     <header>
-        <h1>ส้มตำสมดี อร่อยดี</h1>
-        <p>สั่งส้มตำ</p>
+        <div class="header-container">
+            <div class="header-text">
+                <h1>ส้มตำสมดี อร่อยดี</h1>
+                <p>สั่งส้มตำ</p>
+            </div>
+            <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+        </div>
     </header>
+
+    <div id="sideMenuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    <nav id="sideMenu" class="side-menu">
+        <div class="menu-header">
+            <h2>หมวดหมู่เมนู</h2>
+            <button class="close-btn" onclick="toggleMenu()">×</button>
+        </div>
+        <div class="menu-links">
+            <button class="menu-link active" onclick="showTab('lao', event); toggleMenu();">เหลา</button>
+            <button class="menu-link" onclick="showTab('tum', event); toggleMenu();">ตำ</button>
+            <button class="menu-link" onclick="showTab('season', event); toggleMenu();">ตามฤดูกาล</button>
+            <button class="menu-link" onclick="showTab('topping', event); toggleMenu();">ท็อปปิ้ง</button>
+        </div>
+    </nav>
     
     <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('lao', event)">เหลา</button>
-            <button class="tab-btn" onclick="showTab('tum', event)">ตำ</button>
-            <button class="tab-btn" onclick="showTab('season', event)">ตามฤดูกาล</button>
-            <button class="tab-btn" onclick="showTab('topping', event)">ท็อปปิ้ง</button>
-        </div>
-
         <div id="lao" class="menu-section active"></div>
         <div id="tum" class="menu-section"></div>
         <div id="season" class="menu-section"></div>
