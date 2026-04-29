@@ -1,55 +1,74 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>เมนูร้านส้มตำส้มดีอร่อยดี</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ส้มตำสมดี อร่อยดี</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="somtam.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-  <h1>เมนูร้านส้มตำส้มดีอร่อยดี</h1>
+    <header>
+        <h1>ส้มตำสมดี อร่อยดี</h1>
+        <p>สั่งส้มตำ</p>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('lao', event)">เหลา</button>
+            <button class="tab-btn" onclick="showTab('tum', event)">ตำ</button>
+            <button class="tab-btn" onclick="showTab('season', event)">ตามฤดูกาล</button>
+            <button class="tab-btn" onclick="showTab('topping', event)">ท็อปปิ้ง</button>
+        </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('lao', event)">เหลารวม</button>
-    <button class="tab-btn" onclick="showTab('season', event)">ผลไม้ตามฤดูกาล</button>
-    <button class="tab-btn" onclick="showTab('tum', event)">ตำ</button>
-    <button class="tab-btn" onclick="showTab('topping', event)">ท็อปปิ้ง</button>
-  </div>
+        <div id="lao" class="menu-section active"></div>
+        <div id="tum" class="menu-section"></div>
+        <div id="season" class="menu-section"></div>
+        <div id="topping" class="menu-section"></div>
 
-  <div id="lao" class="menu-section active"></div>
-  <div id="season" class="menu-section"></div>
-  <div id="tum" class="menu-section"></div>
-  <div id="topping" class="menu-section"></div>
+        <div class="cart">
+            <h2>🛒 สรุปรายการอาหาร</h2>
+            <pre id="orderSummary">ไม่พบสินค้าในตะกร้า</pre>
+            
+            <div class="total-section">
+                <h3>รวม: <span id="totalPrice">0.00</span> บาท</h3>
+            </div>
 
-  <div class="payment-methods">
-    <div class="pay-btn active" data-method="เงินสด" onclick="selectPayment(this)">เงินสด</div>
-    <div class="pay-btn" data-method="พร้อมเพย์" onclick="selectPayment(this)">พร้อมเพย์</div>
-  </div>
+            <div class="input-group">
+                <input type="text" id="customerName" placeholder="ชื่อลูกค้า">
+                <input type="text" id="orderNote" placeholder="หมายเหตุ (เช่น ไม่เผ็ด, หวานน้อย)">
+            </div>
 
-  <input type="text" id="customerName" placeholder="ชื่อลูกค้า" class="large-input" />
-  <textarea id="orderNote" placeholder="หมายเหตุเพิ่มเติม..." class="large-input" rows="3" style="resize:none;"></textarea>
+            <div class="payment-methods">
+                <button class="pay-btn active" data-method="เงินสด" onclick="selectPayment(this)">เงินสด</button>
+                <button class="pay-btn" data-method="พร้อมเพย์" onclick="selectPayment(this)">พร้อมเพย์</button>
+            </div>
 
-  <p class="total">รวมทั้งหมด: <span id="totalPrice">0.00</span> บาท</p>
+            <div id="promptpaySection" style="display: none; text-align: center; margin-top: 20px;">
+                <img id="promptpayQR" src="" alt="QR Code" style="max-width: 200px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px;">
+                <div class="upload-slip-section">
+                    <label for="slipUpload" class="upload-btn">📸 แนบสลิปโอนเงิน</label>
+                    <input type="file" id="slipUpload" accept="image/*" style="display: none;" onchange="handleSlipUpload(event)">
+                    <div id="slipName" class="slip-name-display"></div>
+                </div>
+            </div>
 
-  <div id="promptpaySection" style="display: none;">
-    <p>สแกน QR พร้อมเพย์ เพื่อชำระเงิน</p>
-    <img id="promptpayQR" src="https://promptpay.io/0801138627/0.00.png" alt="QR พร้อมเพย์" />
-    <p>พร้อมเพย์: <strong id="promptpayNumber">0801138627</strong></p>
-  </div>
+            <button id="checkoutBtn" class="checkout-btn" onclick="sendOrder()" disabled>กรุณาเลือกอาหาร</button>
+            <div id="orderIdDisplay" class="order-id-display"></div>
+        </div>
+    </div>
 
-  <button onclick="sendOrder()" class="large-button">ส่งคำสั่งซื้อ</button>
+    <div id="queuePopup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <h2>🎉 สั่งอาหารสำเร็จ!</h2>
+            <p>หมายเลขคิวของคุณคือ</p>
+            <div id="popupQueueNumber" class="queue-number">0</div>
+            <button onclick="closeQueuePopup()">ตกลง</button>
+        </div>
+    </div>
 
-  <p id="orderIdDisplay"></p>
-  <pre id="orderSummary"></pre>
-
-  <div id="queuePopup">
-    <p>หมายเลขคิวของคุณคือ</p>
-    <p id="popupQueueNumber" style="font-size: 4rem; color: #ff4081;"></p>
-    <button onclick="closeQueuePopup()">ปิด</button>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="somtam.js"></script>
 </body>
 </html>
